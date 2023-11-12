@@ -284,6 +284,7 @@ void cnn_print_network_info(FILE *fp);
 int cnn_LearnTo(int ndxtarg);
 void cnn_reset(void);
 void cnn_back(void);
+void cnn_SerialiseParams(void);
 
 
 
@@ -302,8 +303,8 @@ void do_experiment()
     double dlth,y;
 
 
-	nPass = 50;
-	lambda = 0.01;
+	nPass = 1; //50
+	lambda = 0.01; //0.01
 
 	srand(12345);
 	cnn_init();
@@ -374,6 +375,9 @@ void do_experiment()
 		lambda*=fbb;
 		fthre -= dlth;
 	}
+
+    cnn_SerialiseParams();
+    cnn_DeserialiseParams();
 
 	for(j=0;j<10;j++) staterr[j]=0;
 

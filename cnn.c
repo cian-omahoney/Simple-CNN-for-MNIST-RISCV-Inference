@@ -328,3 +328,57 @@ int cnn_LearnTo(int ndxtarg)
 
 	return iret;
 }
+
+void cnn_SerialiseParams()
+{
+    FILE *fo;
+
+    fo=fopen("mnist_cnn_params.dat","wb");
+    if (fo == NULL)
+    {
+        printf("Error! opening file");
+        exit(1);
+    }
+
+    if(fwrite(thr1, sizeof(thr1[0]), NN_LAYER1, fo) != NN_LAYER1)
+    {
+        printf("Error! Writing thr1 to file");
+        exit(1);
+    }
+
+    if(fwrite(thr2, sizeof(thr2[0]), NN_LAYER2, fo) != NN_LAYER2)
+    {
+        printf("Error! Writing thr2 to file");
+        exit(1);
+    }
+
+    if(fwrite(thro, sizeof(thro[0]), NN_OUTPUT, fo) != NN_OUTPUT)
+    {
+        printf("Error! Writing thro to file");
+        exit(1);
+    }
+
+    if(fwrite(cw1, sizeof(cw1[0][0][0]), NN_LAYER1*RFW*RFW, fo) != NN_LAYER1*RFW*RFW)
+    {
+        printf("Error! Writing cw1 to file");
+        exit(1);
+    }
+
+    if(fwrite(cw2, sizeof(cw2[0][0][0][0]), NN_LAYER2*NN_LAYER1*RFW*RFW, fo) != NN_LAYER2*NN_LAYER1*RFW*RFW)
+    {
+        printf("Error! Writing cw2 to file");
+        exit(1);
+    }
+
+    if(fwrite(w3, sizeof(w3[0][0][0][0]), NN_OUTPUT*NN_LAYER2*L2W*L2W, fo) != NN_OUTPUT*NN_LAYER2*L2W*L2W)
+    {
+        printf("Error! Writing w3 to file");
+        exit(1);
+    }
+
+    fclose(fo);
+}
+
+void cnn_DeserialiseParams()
+{
+}
