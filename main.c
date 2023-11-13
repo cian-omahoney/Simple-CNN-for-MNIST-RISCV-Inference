@@ -284,7 +284,9 @@ void cnn_print_network_info(FILE *fp);
 int cnn_LearnTo(int ndxtarg);
 void cnn_reset(void);
 void cnn_back(void);
-void cnn_SerialiseParams(void);
+void cnn_SerializeParams(void);
+void cnn_DeserializeParams(void);
+void cnn_CheckSerialDeserial(void);
 
 
 
@@ -303,7 +305,7 @@ void do_experiment()
     double dlth,y;
 
 
-	nPass = 1; //50
+	nPass = 100; //50
 	lambda = 0.01; //0.01
 
 	srand(12345);
@@ -376,8 +378,9 @@ void do_experiment()
 		fthre -= dlth;
 	}
 
-    cnn_SerialiseParams();
-    cnn_DeserialiseParams();
+    cnn_SerializeParams();
+    cnn_DeserializeParams();
+    cnn_CheckSerialDeserial();
 
 	for(j=0;j<10;j++) staterr[j]=0;
 

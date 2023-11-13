@@ -37,6 +37,13 @@ double thr1[NN_LAYER1];
 double thr2[NN_LAYER2];
 double thro[NN_OUTPUT];
 
+// Deserialised Params:
+double cw1_ds[NN_LAYER1][RFW][RFW];
+double cw2_ds[NN_LAYER2][NN_LAYER1][RFW][RFW];
+double w3_ds[NN_OUTPUT][NN_LAYER2][L2W][L2W];
+double thr1_ds[NN_LAYER1];
+double thr2_ds[NN_LAYER2];
+double thro_ds[NN_OUTPUT];
 
 //--------------------------------------------------
 void cnn_init(void)
@@ -329,7 +336,7 @@ int cnn_LearnTo(int ndxtarg)
 	return iret;
 }
 
-void cnn_SerialiseParams()
+void cnn_SerializeParams()
 {
     FILE *fo;
 
@@ -379,6 +386,110 @@ void cnn_SerialiseParams()
     fclose(fo);
 }
 
-void cnn_DeserialiseParams()
+void cnn_DeserializeParams()
 {
+    FILE *fi;
+
+    fi=fopen("mnist_cnn_params.dat","rb");
+    if (fi == NULL)
+    {
+        printf("Error! opening file");
+        exit(1);
+    }
+
+    if(fread(thr1_ds, sizeof(thr1_ds[0]), NN_LAYER1, fi) != NN_LAYER1)
+    {
+        printf("Error! Reading thr1 to file");
+        exit(1);
+    }
+
+    if(fread(thr2_ds, sizeof(thr2_ds[0]), NN_LAYER2, fi) != NN_LAYER2)
+    {
+        printf("Error! Reading thr2 to file");
+        exit(1);
+    }
+
+    if(fread(thro_ds, sizeof(thro_ds[0]), NN_OUTPUT, fi) != NN_OUTPUT)
+    {
+        printf("Error! Reading thro to file");
+        exit(1);
+    }
+
+    if(fread(cw1_ds, sizeof(cw1_ds[0][0][0]), NN_LAYER1*RFW*RFW, fi) != NN_LAYER1*RFW*RFW)
+    {
+        printf("Error! Reading cw1 to file");
+        exit(1);
+    }
+
+    if(fread(cw2_ds, sizeof(cw2_ds[0][0][0][0]), NN_LAYER2*NN_LAYER1*RFW*RFW, fi) != NN_LAYER2*NN_LAYER1*RFW*RFW)
+    {
+        printf("Error! Reading cw2 to file");
+        exit(1);
+    }
+
+    if(fread(w3_ds, sizeof(w3_ds[0][0][0][0]), NN_OUTPUT*NN_LAYER2*L2W*L2W, fi) != NN_OUTPUT*NN_LAYER2*L2W*L2W)
+    {
+        printf("Error! Reading w3 to file");
+        exit(1);
+    }
+
+    fclose(fi);
+}
+
+void cnn_CheckSerialDeserial()
+{
+    int n1,n2,n3,cx,cy,rx,ry;
+
+    for(n1=0;n1<NN_LAYER1;n1++) for(ry=0;ry<RFW;ry++) for(rx=0;rx<RFW;rx++)
+    {
+        if(cw1[n1][ry][rx] !=  cw1_ds[n1][ry][rx])
+        {
+            printf("Error! Checking cw1.");
+            exit(1);
+        }
+    }
+
+    for(n2=0;n2<NN_LAYER2;n2++) for(n1=0;n1<NN_LAYER1;n1++) for(ry=0;ry<RFW;ry++) for(rx=0;rx<RFW;rx++)
+    {
+        if(cw2[n2][n1][ry][rx] != cw2_ds[n2][n1][ry][rx])
+        {
+            printf("Error! Checking cw2.");
+            exit(1);
+        }
+    }
+
+    for(n3=0;n3<NN_OUTPUT;n3++) for(n2=0;n2<NN_LAYER2;n2++) for(cy=0;cy<L2W;cy++) for(cx=0;cx<L2W;cx++)
+    {
+        if(w3[n3][n2][cy][cx] != w3_ds[n3][n2][cy][cx])
+        {
+            printf("Error! Checking w3.");
+            exit(1);
+        }
+
+    }
+
+    for(n1=0;n1<NN_LAYER1;n1++)
+    {
+        if(thr1[n1] != thr1_ds[n1])
+        {
+            printf("Error! Checking thr1.");
+            exit(1);
+        }
+    }
+
+    for(n2=0;n2<NN_LAYER2;n2++) {
+        if(thr2[n2] != thr2_ds[n2])
+        {
+            printf("Error! Checking thr2.");
+            exit(1);
+        }
+
+    }
+
+    for(n3=0;n3<NN_OUTPUT;n3++) {
+        if(thro[n3] != thro_ds[n3]) {
+            printf("Error! Checking thro.");
+            exit(1);
+        }
+    }
 }
