@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Simple_CNN_for_MNIST_RISCV C)
+project(Simple_CNN_for_MNIST_RISCV_Inference C)
 
 set(CMAKE_C_STANDARD 11)
 
