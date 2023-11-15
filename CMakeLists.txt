@@ -3,6 +3,9 @@ project(Simple_CNN_for_MNIST_RISCV_Inference C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Simple_CNN_for_MNIST_RISCV main.c cnn.c)
+add_executable(Simple_CNN_for_MNIST_RISCV main.c cnn.c
+        mnist_params.h
+        mnist_params_fixedPoint.h
+)
 target_link_libraries(Simple_CNN_for_MNIST_RISCV m)
 

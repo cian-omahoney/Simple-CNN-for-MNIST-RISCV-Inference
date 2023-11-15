@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint-gcc.h>
 
 char mnistDirectory[] = "../mnist/";
 char sz_Tstdata[] = "t10k-images-idx3-ubyte";
@@ -11,12 +12,10 @@ int n_tst_images;
 unsigned char * pb_tst_data;
 int *pi_tst_labels;
 
-extern unsigned char chrf[784];
+extern uint8_t chrf[784];
 
 void cnn_init(void);
 int cnn_Recogn(void);
-void cnn_print_network_info(FILE *fp);
-void cnn_DeserializeParams(void);
 
 int * read_mnist_labels(char *szfname)
 {
@@ -133,11 +132,8 @@ void do_experiment()
     unsigned char *pbtst;
 
 	cnn_init();
-    cnn_DeserializeParams();
 
 	fo=fopen("mnist_demo_log.txt","a+");
-
-	cnn_print_network_info(fo);
 
 	for(j=0;j<10;j++) staterr[j]=0;
 
@@ -155,11 +151,12 @@ void do_experiment()
             ++staterr[k];
         }
     }
-		
+
 	time( &ltime );
 	printf( "The end: %s\n", ctime( &ltime ) );
 	fprintf(fo, "The end: %s\n", ctime( &ltime ) );
-	printf("Test_set:%d errors\n",numerrtst);
+	printf("Test_set:%.3f%% errors\n",100*(float)numerrtst/(float)n_tst_images);
+    printf("Test_set:%d errors\n", numerrtst);
 	fprintf(fo,"Test_set:%d errors\n",numerrtst);
 	for(j=0;j<10;j++)
 	{
